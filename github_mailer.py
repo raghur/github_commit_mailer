@@ -1,4 +1,4 @@
-#! /bin/python
+#! /usr/bin/python
 # Usage - git_commit_mailer.py <recipients> smtp_user smtp_pass smtp_server port
 # What: listens on port 8080. Whenever Github.com pusts with Json encoded commit details, this can send a mail out
 #       to the email addresses given above. github should really do this on their own :(
@@ -147,7 +147,7 @@ class CustomHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
-httpd = SocketServer.ThreadingTCPServer(('localhost', args.port),CustomHandler)
+httpd = SocketServer.ThreadingTCPServer(('0.0.0.0', args.port),CustomHandler)
 
 
 print "serving at port", args.port
