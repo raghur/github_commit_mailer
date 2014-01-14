@@ -77,9 +77,7 @@ class Mailer:
         :returns: @todo
 
         """
-        self.server = server
-        self.user = user
-        self.password = password
+        self.mailer = SmtpMailer(server, user, password)
         self.recipients = recipients
         self.subjectTemplate = subjectTemplate
         self.messageTemplate = messageTemplate
@@ -88,7 +86,7 @@ class Mailer:
         for commit in json["commits"]:
             subject = self.subjectTemplate.render(json=json, commit=commit)
             message= self.messageTemplate.render(json=json, commit=commit)
-            mail(self.recipients ,subject, message )
+            self.mailer.mail(self.recipients, subject, message )
 
 """
 Serves files out of its current directory.
