@@ -17,7 +17,7 @@ class SmtpMailer:
         self.password = password
         self.port = port
 
-    def mail(to, subject, text, attach = None):
+    def mail(self, to, subject, text, attach = None):
        msg = MIMEMultipart()
 
        msg['From'] = self.user
@@ -34,7 +34,7 @@ class SmtpMailer:
                    'attachment; filename="%s"' % os.path.basename(attach))
            msg.attach(part)
 
-       mailServer = smtplib.SMTP(self.server, 587)
+       mailServer = smtplib.SMTP(self.server, self.port)
        mailServer.ehlo()
        mailServer.starttls()
        mailServer.ehlo()

@@ -6,6 +6,8 @@
 #   gmail mail script from http://kutuma.blogspot.in/2007/08/sending-emails-via-gmail-with-python.html
 # 
 
+import sys
+from mail import SmtpMailer
 from jinja2 import Template
 subject_template = "[{{json.repository.name}}]<{{commit.author.name}}> {{commit.message}} SHA:{{commit.id}}"
 message_template = u"""
@@ -77,12 +79,12 @@ class Mailer:
         :returns: @todo
 
         """
-        self.mailer = SmtpMailer(server, user, password)
+        self.mailer = SmtpMailer(server, user, passw, 587)
         self.recipients = recipients
         self.subjectTemplate = subjectTemplate
         self.messageTemplate = messageTemplate
 
-    def send_mails(json):
+    def send_mails(self, json):
         for commit in json["commits"]:
             subject = self.subjectTemplate.render(json=json, commit=commit)
             message= self.messageTemplate.render(json=json, commit=commit)
