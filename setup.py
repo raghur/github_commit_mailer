@@ -12,20 +12,18 @@ setup(name="GithubCommitMailer",
       description=("Get colorized diffs from github pushes"),
       license = "BSD",
       keywords = "github, git",
-      url = "https://bitbucket.org/raghur/GithubCommitMailer",
+      url = "https://github.com/raghur/github_commit_mailer",
       packages=['githubmailer'],
       install_requires = [
-          'pypandoc',
-          'google-api-python-client',
-          'python-gflags',
-          'httplib2'
+          'jinja2',
+          'pygments'
       ],
       entry_points = {
           'console_scripts': [
-    'easyblogger = blogger.blogger:main'
+    'github_mailer = githubmailer.githubmailer:main'
                          ]
                      },
-      long_description='see https://bitbucket.org/raghur/GithubCommitMailer',
+      long_description='see https://github.com/raghur/github_commit_mailer',
       classifiers=[
           "Development Status :: 4 - Beta",
           "Topic :: Utilities",

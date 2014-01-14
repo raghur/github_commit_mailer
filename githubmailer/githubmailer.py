@@ -40,7 +40,7 @@ import pygments.lexers
 import pygments.formatters
 
 class GithubDiffColorizer():
-    def __init__(self, , token):
+    def __init__(self, token):
         self.token = token
         self.lexer = pygments.lexers.get_lexer_for_filename("something.diff")
         self.formatter = pygments.formatters.HtmlFormatter(full=True)
