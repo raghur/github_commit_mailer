@@ -4,7 +4,7 @@
 #       to the email addresses given above. github should really do this on their own :(
 # Credits
 #   gmail mail script from http://kutuma.blogspot.in/2007/08/sending-emails-via-gmail-with-python.html
-# 
+#
 
 import sys
 from mail import SmtpMailer
@@ -47,7 +47,7 @@ class GithubDiffColorizer():
         self.lexer = pygments.lexers.get_lexer_for_filename("something.diff")
         self.formatter = pygments.formatters.HtmlFormatter(full=True)
 
-    def get_diff_for_commit(repository, owner, sha):
+    def get_diff_for_commit(self, repository, owner, sha):
         commit_tmpl = "https://api.github.com/repos/{owner}/{repository}/commits/{sha}"
         headers = {
                 "Accept": "application/vnd.github.diff",
@@ -60,12 +60,12 @@ class GithubDiffColorizer():
         ucontent = unicode (content, "utf-8")
         return ucontent
 
-    def colorize_diffs(json):
+    def colorize_diffs(self, json):
         repository = json["repository"]["name"]
         owner = json["repository"]["owner"]["name"]
         for commit in json["commits"]:
-            ucontent = get_diff_for_commit(repository, owner, commit["id"])
-            hldiff = pygments.highlight(ucontent, lexer, formatter)
+            ucontent = self.get_diff_for_commit(repository, owner, commit["id"])
+            hldiff = pygments.highlight(ucontent, self.lexer, self.formatter)
             commit["diff"]=hldiff
 
 
