@@ -6,6 +6,7 @@ from email.MIMEText import MIMEText
 from email import Encoders
 import os
 
+
 class SmtpMailer:
     def __init__(self, server, user, password, port):
         """@todo: Docstring for __init__.
@@ -17,29 +18,28 @@ class SmtpMailer:
         self.password = password
         self.port = port
 
-    def mail(self, to, subject, text, attach = None):
-       msg = MIMEMultipart()
+    def mail(self, to, subject, text, attach=None):
+        msg = MIMEMultipart()
 
-       msg['From'] = self.user
-       msg['To'] = ",".join(to)
-       msg['Subject'] = subject
+        msg['From'] = self.user
+        msg['To'] = ",".join(to)
+        msg['Subject'] = subject
 
-       msg.attach(MIMEText(text, 'html', _charset='utf-8'))
+        msg.attach(MIMEText(text, 'html', _charset='utf-8'))
 
-       if (attach):
-           part = MIMEBase('application', 'octet-stream')
-           part.set_payload(open(attach, 'rb').read())
-           Encoders.encode_base64(part)
-           part.add_header('Content-Disposition',
-                   'attachment; filename="%s"' % os.path.basename(attach))
-           msg.attach(part)
+        if (attach):
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(open(attach, 'rb').read())
+            Encoders.encode_base64(part)
+            part.add_header('Content-Disposition',
+                            'attachment; filename="%s"' % os.path.basename(attach))
+            msg.attach(part)
 
-       mailServer = smtplib.SMTP(self.server, self.port)
-       mailServer.ehlo()
-       mailServer.starttls()
-       mailServer.ehlo()
-       mailServer.login(self.user, self.passw)
-       mailServer.sendmail(self.user, to, msg.as_string())
-       # Should be mailServer.quit(), but that crashes...
-       mailServer.close()
-
+        mailServer = smtplib.SMTP(self.server, self.port)
+        mailServer.ehlo()
+        mailServer.starttls()
+        mailServer.ehlo()
+        mailServer.login(self.user, self.password)
+        mailServer.sendmail(self.user, to, msg.as_string())
+# Should be mailServer.quit(), but that crashes...
+        mailServer.close()

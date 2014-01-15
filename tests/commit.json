@@ -1,20 +1,20 @@
 payload={
   "before": "5aef35982fb2d34e9d9d4502f6ede1072793222d",
   "repository": {
-    "url": "https://github.com/AditiTechnologies/Portal",
-    "name": "Portal",
+    "url": "https://github.com/raghur/github_commit_mailer",
+    "name": "vimfiles",
     "description": "You're lookin' at it.",
     "watchers": 5,
     "forks": 2,
     "private": 1,
     "owner": {
       "email": "chris@ozmm.org",
-      "name": "AditiTechnologies"
+      "name": "raghur"
     }
   },
   "commits": [
     {
-      "id": "71d6defd2e7e6b1182e0667e84324ce1b0c3ed07",
+      "id": "eaa4a3f758acec3dbc5220b36c82f7ac480e930a",
       "url": "https://github.com/AditiTechnologies/Portal/commit/71d6defd2e7e6b1182e0667e84324ce1b0c3ed07",
       "author": {
         "email": "chris@ozmm.org",
@@ -25,7 +25,7 @@ payload={
       "added": ["filepath.rb"]
     },
     {
-      "id": "e48d188767fcbabfb7892e6b1f3d049287c29796",
+      "id": "48f0791c96a94305de90b248f65c0b25652cba36",
       "url": "https://github.com/AditiTechnologies/Portal/commit/e48d188767fcbabfb7892e6b1f3d049287c29796",
       "author": {
         "email": "chris@ozmm.org",

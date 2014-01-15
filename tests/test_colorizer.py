@@ -27,4 +27,3 @@ class GithubColorizerTests(TestCase):
         self.colorizer \
             .get_diff_for_commit.called_with("repo", "owner", "sha1")
         self.assertTrue("___diff___" in data["commits"][0]["diff"])
-        pass
