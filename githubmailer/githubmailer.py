@@ -10,7 +10,7 @@ import sys
 import base64
 from mail import SmtpMailer
 from jinja2 import Template
-subject_template = "[{{json.repository.name}}]<{{commit.author.name}}> {{commit.message}} SHA:{{commit.id}}"
+subject_template = "[{{json.repository.name}}:{% print commit.id[:7]%}]<{{commit.author.name}}> {{commit.message}} "
 message_template = u"""
 
 url: {{commit.url}}<br/>
@@ -128,7 +128,6 @@ class CustomHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         length = int(self.headers['Content-Length'])
         post_data = urlparse.parse_qs(self.rfile.read(length).decode('utf-8'))
         obj = json.loads(post_data['payload'][0])
-        print obj
         self.server.colorizer.colorize_diffs(obj)
         self.server.mailer.send_mails(obj)
         self.send_response(200)
