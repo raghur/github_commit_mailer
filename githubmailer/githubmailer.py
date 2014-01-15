@@ -6,6 +6,16 @@
 #   gmail mail script from http://kutuma.blogspot.in/2007/08/sending-emails-via-gmail-with-python.html
 #
 
+#######################
+#######################
+# TODO:
+# Config file
+# Interactive mode - call with owner, repo,sha and recipients
+# service script
+# Templates in external files
+# Class level variables for some things
+# move server to separate file
+
 import sys
 import base64
 from mail import SmtpMailer
