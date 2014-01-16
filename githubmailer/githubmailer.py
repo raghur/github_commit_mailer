@@ -15,7 +15,7 @@
 # Templates in external files [DONE]
 # Class level variables for some things
 # move server to separate file
-# better logging
+# better logging [DONE]
 
 import sys
 import os
@@ -34,10 +34,12 @@ subjecttmpl = Template(subject_template)
 
 import urllib2
 from urllib2 import Request
+import logging
 import pygments
 import pygments.lexers
 import pygments.formatters
-
+logger = logging.getLogger()
+logging.basicConfig()
 
 class GithubDiffColorizer():
     def __init__(self, token):
@@ -50,7 +52,7 @@ class GithubDiffColorizer():
         self.authorizationHeader = "Basic %s" % base64string
 
     def make_github_api_call(self, url, headers):
-        print url
+        logger.debug(url)
         req = Request(url, None, headers)
         f = urllib2.urlopen(req)
         content = f.read()
@@ -117,7 +119,7 @@ class Mailer:
     def send_mails(self, commit):
         subject = self.subjectTemplate.render(commit=commit)
         message = self.messageTemplate.render(commit=commit)
-        print "sending to: ", self.recipients
+        logger.debug("sending to: %s", self.recipients)
         self.mailer.mail(self.recipients, subject, message)
 
 """
@@ -134,7 +136,7 @@ import json
 class CustomHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_POST(self):
         """Respond to a POST request."""
-        print "handling request"
+        logger.debug("handling request")
         # Extract and print the contents of the POST
         length = int(self.headers['Content-Length'])
         post_data = urlparse.parse_qs(self.rfile.read(length).decode('utf-8'))
@@ -200,11 +202,25 @@ def parse_args(argv):
     parser.add_argument('recipients',
                         nargs="+",
                         help="Recipient email address(es)")
+    parser.add_argument("-v",
+                        "--verbose",
+                        help="Log level: INFO,DEBUG,CRITICAL,WARNING",
+                        dest = "verbosity",
+                        default="INFO")
     config = os.path.expanduser("~/.github_commit_mailer")
     if (os.path.exists(config)):
+        logger.debug("include config file", config)
         argv = ["@" + config] + argv
     args = parser.parse_args(argv)
-    #print args
+    # assuming loglevel is bound to the string value obtained from the
+    # command line argument. Convert to upper case to allow the user to
+    # specify --log=DEBUG or --log=debug
+    numeric_level = getattr(logging, args.verbosity.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % loglevel)
+    logger.info("Setting log level to: %s", args.verbosity)
+    logger.setLevel(numeric_level)
+    logger.debug(args)
     return args
 
 
@@ -230,9 +246,8 @@ def main(sysargv=sys.argv):
         mailer.send_mails(commit)
     else:
         httpd = MyServer(('0.0.0.0', args.port), githubColorizer, mailer)
-        print "serving at port", args.port
+        logger.info("serving at port %d", args.port)
         httpd.serve_forever()
 
 if __name__ == '__main__':
-    print sys.argv
     main()
