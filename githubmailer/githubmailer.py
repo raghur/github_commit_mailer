@@ -9,14 +9,16 @@
 #######################
 #######################
 # TODO:
-# Config file
+# Config file [DONE]
 # Interactive mode - call with owner, repo,sha and recipients
 # service script
 # Templates in external files [DONE]
 # Class level variables for some things
 # move server to separate file
+# better logging
 
 import sys
+import os
 import base64
 from mail import SmtpMailer
 from jinja2 import Template
@@ -138,7 +140,8 @@ class MyServer(SocketServer.ThreadingTCPServer):
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description = """Handle github.com post-recieve-hook JSON payload and send email notifications.
-    See https://help.github.com/articles/post-receive-hooks""")
+    See https://help.github.com/articles/post-receive-hooks""",
+                                     fromfile_prefix_chars='@')
     parser.add_argument('-s',
                         '--smtp-server',
                         dest='server',
@@ -168,6 +171,9 @@ def parse_args(argv):
     parser.add_argument('recipients',
                         nargs="+",
                         help="Recipient email address(es)")
+    config = os.path.expanduser("~/.github_commit_mailer")
+    if (os.path.exists(config)):
+        argv = ["@" + config] + argv
     args = parser.parse_args(argv)
     #print args
     return args
