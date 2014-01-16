@@ -10,7 +10,7 @@
 #######################
 # TODO:
 # Config file [DONE]
-# Interactive mode - call with owner, repo,sha and recipients
+# Interactive mode - call with owner, repo,sha and recipients [DONE]
 # service script
 # Templates in external files [DONE]
 # Class level variables for some things
@@ -29,7 +29,8 @@ message_template = pkg_resources.resource_string(__name__,
                                                  "message_template.tmpl")
 mailtmpl = Template(message_template)
 subjecttmpl = Template(subject_template)
-# refer to https://help.github.com/articles/post-receive-hooks for info on GitHub's post recieve hook data
+# refer to https://help.github.com/articles/post-receive-hooks
+# for info on GitHub's post recieve hook data
 
 import urllib2
 from urllib2 import Request
@@ -48,14 +49,7 @@ class GithubDiffColorizer():
                              .replace('\n', '')
         self.authorizationHeader = "Basic %s" % base64string
 
-    def get_diff_for_commit(self, repository, owner, sha):
-        headers = {
-            "Accept": "application/vnd.github.diff",
-            "Authorization": self.authorizationHeader
-        }
-        url = self.commit_tmpl.format(owner=owner,
-                                      repository=repository,
-                                      sha=sha)
+    def make_github_api_call(self, url, headers):
         print url
         req = Request(url, None, headers)
         f = urllib2.urlopen(req)
@@ -63,17 +57,40 @@ class GithubDiffColorizer():
         ucontent = unicode(content, "utf-8")
         return ucontent
 
-    def colorize_diffs(self, json):
-        repository = json["repository"]["name"]
-        owner = json["repository"]["owner"]["name"]
-        for commit in json["commits"]:
-            ucontent = self.get_diff_for_commit(repository,
-                                                owner,
-                                                commit["id"])
-            hldiff = pygments.highlight(ucontent,
-                                        self.lexer,
-                                        self.formatter)
-            commit["diff"] = hldiff
+    def get_diff_for_commit(self, owner, repository, sha):
+        headers = {
+            "Accept": "application/vnd.github.diff",
+            "Authorization": self.authorizationHeader
+        }
+        url = self.commit_tmpl.format(owner=owner,
+                                      repository=repository,
+                                      sha=sha)
+        return self.make_github_api_call(url, headers)
+
+    def get_commit(self, owner, repository, sha):
+        """@todo: Docstring for get_commit.
+
+        :arg1: @todo
+        :returns: @todo
+
+        """
+        headers = {
+            "Accept": "application/vnd.github.beta+json",
+            "Authorization": self.authorizationHeader
+        }
+        url = self.commit_tmpl.format(owner=owner,
+                                      repository=repository,
+                                      sha=sha)
+        return self.make_github_api_call(url, headers)
+
+    def colorize_diffs(self, owner, repository, sha):
+        ucontent = self.get_diff_for_commit(owner,
+                                            repository,
+                                            sha)
+        hldiff = pygments.highlight(ucontent,
+                                    self.lexer,
+                                    self.formatter)
+        return hldiff
 
 
 class Mailer:
@@ -97,12 +114,11 @@ class Mailer:
         self.subjectTemplate = subjectTemplate
         self.messageTemplate = messageTemplate
 
-    def send_mails(self, json):
-        for commit in json["commits"]:
-            subject = self.subjectTemplate.render(json=json, commit=commit)
-            message = self.messageTemplate.render(json=json, commit=commit)
-            print "sending to: ", self.recipients
-            self.mailer.mail(self.recipients, subject, message)
+    def send_mails(self, commit):
+        subject = self.subjectTemplate.render(commit=commit)
+        message = self.messageTemplate.render(commit=commit)
+        print "sending to: ", self.recipients
+        self.mailer.mail(self.recipients, subject, message)
 
 """
 Serves files out of its current directory.
@@ -123,8 +139,13 @@ class CustomHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         length = int(self.headers['Content-Length'])
         post_data = urlparse.parse_qs(self.rfile.read(length).decode('utf-8'))
         obj = json.loads(post_data['payload'][0])
-        self.server.colorizer.colorize_diffs(obj)
-        self.server.mailer.send_mails(obj)
+        for commit in obj["commits"]:
+            repository = obj["repository"]["name"]
+            owner = obj["repository"]["owner"]["name"]
+            diff = self.server.colorizer.colorize_diffs(owner, repository, commit["id"])
+            commit["diff"] = diff
+            commit["repository"] = repository
+            self.server.mailer.send_mails(commit)
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -168,6 +189,14 @@ def parse_args(argv):
                         dest='token',
                         help="OAuth Token",
                         required=True)
+    parser.add_argument('-r',
+                        '--repository',
+                        dest='repository',
+                        help="Repository in 'owner/repo' format")
+    parser.add_argument('-c',
+                        '--commit',
+                        dest='commit',
+                        help="commit SHA (usually first 5 chars are sufficient)")
     parser.add_argument('recipients',
                         nargs="+",
                         help="Recipient email address(es)")
@@ -188,9 +217,21 @@ def main(sysargv=sys.argv):
                     args.recipients,
                     subjecttmpl,
                     mailtmpl)
-    httpd = MyServer(('0.0.0.0', args.port), githubColorizer, mailer)
-    print "serving at port", args.port
-    httpd.serve_forever()
+    if (args.repository and args.commit):
+        owner, repo = args.repository.split("/")
+        commitresp = json.loads(githubColorizer.get_commit(owner,
+                                                           repo,
+                                                           args.commit))
+        commit = commitresp["commit"]
+        commit["id"] = commitresp["sha"]
+        diff = githubColorizer.colorize_diffs(owner, repo, commit["id"])
+        commit["diff"] = diff
+        commit["repository"] = repo
+        mailer.send_mails(commit)
+    else:
+        httpd = MyServer(('0.0.0.0', args.port), githubColorizer, mailer)
+        print "serving at port", args.port
+        httpd.serve_forever()
 
 if __name__ == '__main__':
     print sys.argv
