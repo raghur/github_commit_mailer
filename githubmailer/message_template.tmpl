@@ -1,0 +1,18 @@
+url: {{commit.url}}<br/>
+Timestamp: {{ commit.timestamp }} <br/>
+message : {{commit.message}} <br/>
+author: {{commit.author.name}} <br/>
+<br/>
+Stats: <br/>
+        {% for path in commit.modified %}
+        Modified: {{ path }} <br/>
+        {% endfor %}
+        {% for path in commit.added %}
+        Added: {{ path }} <br/>
+        {% endfor %}
+        {% for path in commit.removed %}
+        Removed: {{ path }} <br/>
+        {% endfor %}
+<br/>
+Diff: <br/>
+        {{commit.diff}}

@@ -14,6 +14,7 @@ setup(name="GithubCommitMailer",
       keywords = "github, git",
       url = "https://github.com/raghur/github_commit_mailer",
       packages=['githubmailer'],
+      package_data={'': ['*.tmpl']},
       install_requires = [
           'jinja2',
           'pygments'

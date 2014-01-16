@@ -13,7 +13,7 @@ Python script to recieve Github.com post recieve hook and send emails with color
 1. Config file
 1. Interactive mode - call with owner, repo,sha and recipients
 1. service script
-1. Templates in external files
+1. ~~Templates in external files~~ [DONE]
 1. Class level variables for some things
 1. move server to separate file
 

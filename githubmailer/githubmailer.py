@@ -12,7 +12,7 @@
 # Config file
 # Interactive mode - call with owner, repo,sha and recipients
 # service script
-# Templates in external files
+# Templates in external files [DONE]
 # Class level variables for some things
 # move server to separate file
 
@@ -20,28 +20,11 @@ import sys
 import base64
 from mail import SmtpMailer
 from jinja2 import Template
-subject_template = "[{{json.repository.name}}:{% print commit.id[:7]%}]<{{commit.author.name}}> {{commit.message}} "
-message_template = u"""
-
-url: {{commit.url}}<br/>
-Timestamp: {{ commit.timestamp }} <br/>
-message : {{commit.message}} <br/>
-author: {{commit.author.name}} <br/>
-<br/>
-Stats: <br/>
-        {% for path in commit.modified %}
-        Modified: {{ path }} <br/>
-        {% endfor %}
-        {% for path in commit.added %}
-        Added: {{ path }} <br/>
-        {% endfor %}
-        {% for path in commit.removed %}
-        Removed: {{ path }} <br/>
-        {% endfor %}
-<br/>
-Diff: <br/>
-        {{commit.diff}}
-"""
+import pkg_resources
+subject_template = pkg_resources.resource_string(__name__,
+                                                 "subject_template.tmpl")
+message_template = pkg_resources.resource_string(__name__,
+                                                 "message_template.tmpl")
 mailtmpl = Template(message_template)
 subjecttmpl = Template(subject_template)
 # refer to https://help.github.com/articles/post-receive-hooks for info on GitHub's post recieve hook data
