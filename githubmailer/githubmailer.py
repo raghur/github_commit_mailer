@@ -39,7 +39,8 @@ import pygments
 import pygments.lexers
 import pygments.formatters
 logger = logging.getLogger()
-logging.basicConfig()
+logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',)
 
 class GithubDiffColorizer():
     def __init__(self, token):
