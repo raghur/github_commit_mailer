@@ -19,11 +19,9 @@ class GithubColorizerTests(TestCase):
         :returns: @todo
 
         """
-        data = {"repository": {"name": "repo", "owner": {"name": "owner"}},
-                "commits": [{"id": "sha1"}]}
         self.colorizer.get_diff_for_commit = Mock(return_value="___diff___")
-        self.colorizer.colorize_diffs(data)
+        diff = self.colorizer.colorize_diffs("owner", "repo", "sha")
 
         self.colorizer \
-            .get_diff_for_commit.called_with("repo", "owner", "sha1")
-        self.assertTrue("___diff___" in data["commits"][0]["diff"])
+            .get_diff_for_commit.called_with("owner", "repo", "sha")
+        self.assertTrue("___diff___" in diff)
