@@ -1,7 +1,15 @@
 github_commit_mailer
 ====================
+Python script to send commit emails with colorized diffs when commits are pushed to Github.com
 
-Python script to recieve Github.com [post recieve hook](https://help.github.com/articles/post-receive-hooks), generates colorized diffs for each commit and sends emails out.
+![image](assets/snapshot1.png)
+
+## Why
+So Github.com offers commit emails in the service hook section but does not include diffs. Git itself allows you to have hook scripts - but this only works if you host your own repository.
+
+I like commit emails with diffs and since none of the existing solutions worked, I wrote this.
+
+## Summary
 
 ```
 usage: github_mailer [-h] [-s SERVER] -u USER -p PASSW [-P PORT] -t TOKEN
@@ -33,7 +41,7 @@ optional arguments:
 
 ## Github API token
 
-To use this on a repository, you'll need to do two things
+To use this on a repository, you'll need to do two things:
 1. Generate an API token to your github account so that the script can retrieve the diff
 2. On each repository, configure the post-receive service url (whereever you're running `github_commit_mailer` as a server)
 
