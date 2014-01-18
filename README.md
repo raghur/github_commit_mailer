@@ -65,7 +65,6 @@ asfljasdfljasdfljasdf
 1. ~~Interactive mode - call with owner, repo,sha and recipients~~ [DONE]
 1. service script
 1. ~~Templates in external files~~ [DONE]
-1. Class level variables for some things
 1. move server to separate file
 1. ~~logging~~ [DONE]
 
