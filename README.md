@@ -2,7 +2,7 @@ github_commit_mailer
 ====================
 Python script to send commit emails with colorized diffs when commits are pushed to Github.com
 
-![image](assets/snapshot1.png)
+![image](https://raw.github.com/raghur/github_commit_mailer/master/assets/snapshot.png)
 
 ## Why
 So Github.com offers commit emails in the service hook section but does not include diffs. Git itself allows you to have hook scripts - but this only works if you host your own repository.
