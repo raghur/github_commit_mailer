@@ -77,3 +77,6 @@ asfljasdfljasdfljasdf
 1. move server to separate file
 1. ~~logging~~ [DONE]
 
+## Credits
+
+1. gmail mail script from http://kutuma.blogspot.in/2007/08/sending-emails-via-gmail-with-python.html
