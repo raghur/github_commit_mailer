@@ -43,7 +43,7 @@ optional arguments:
 
 To use this on a repository, you'll need to do two things:
 
-1. Generate an API token to your github account so that the script can retrieve the diff
+1. [Generate an API token](https://github.com/blog/1509-personal-api-tokens) to your github account so that the script can retrieve the diff
 2. On each repository, configure the post-receive service url (whereever you're running `github_commit_mailer` as a server)
 
 ## Installation
